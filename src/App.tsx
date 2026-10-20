@@ -4,7 +4,7 @@ import { ConjugationModule } from './components/ConjugationModule';
 import { MathModule } from './components/MathModule';
 import { GeoModule } from './components/GeoModule';
 import { ConjugationTableModal } from './components/ConjugationTableModal';
-import { BookCheck, Sparkles, Heart } from 'lucide-react';
+import { BookCheck, Sparkles, Heart, SpellCheck, BookmarkCheck, ArrowLeft, Check } from 'lucide-react';
 
 export function App() {
   const [currentSubject, setCurrentSubject] = useState<SubjectId>('francais');
@@ -37,21 +37,21 @@ export function App() {
                 </button>
 
                 <button
-                  className="submodule-tab disabled"
-                  title="Module en cours de préparation"
-                  onClick={() => alert("Le module Orthographe sera disponible très bientôt !")}
+                  className={`submodule-tab ${activeFrenchTab === 'orthographe' ? 'active' : ''}`}
+                  onClick={() => setActiveFrenchTab('orthographe')}
                 >
+                  <SpellCheck size={16} />
                   <span>Orthographe d'usage</span>
-                  <span className="badge-soon">Bientôt</span>
+                  <span className="badge-soon">Programme Sec 1</span>
                 </button>
 
                 <button
-                  className="submodule-tab disabled"
-                  title="Module en cours de préparation"
-                  onClick={() => alert("Le module Grammaire & Accords sera disponible très bientôt !")}
+                  className={`submodule-tab ${activeFrenchTab === 'grammaire' ? 'active' : ''}`}
+                  onClick={() => setActiveFrenchTab('grammaire')}
                 >
+                  <BookmarkCheck size={16} />
                   <span>Grammaire & Accords</span>
-                  <span className="badge-soon">Bientôt</span>
+                  <span className="badge-soon">Programme Sec 1</span>
                 </button>
               </div>
 
@@ -66,6 +66,80 @@ export function App() {
               <ConjugationModule
                 onOpenReference={() => setIsReferenceOpen(true)}
               />
+            )}
+
+            {/* Orthographe Preview Card */}
+            {activeFrenchTab === 'orthographe' && (
+              <div className="module-container">
+                <div className="results-hero-card" style={{ textAlign: 'left', maxWidth: '780px', margin: '0 auto' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
+                    <div className="brand-logo-icon" style={{ background: 'var(--amber)' }}>
+                      <SpellCheck size={26} className="text-white" />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0 }}>Module Orthographe d'usage — Secondaire 1</h3>
+                      <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>Notions prioritaires du MEQ</p>
+                    </div>
+                  </div>
+                  <p style={{ color: 'var(--text-main)', fontSize: '1rem', lineHeight: '1.6' }}>
+                    Ce module interactif est conçu pour consolider les réflexes d'écriture des élèves à l'entrée au secondaire :
+                  </p>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: '1.25rem 0', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                      <Check size={18} className="text-emerald" style={{ flexShrink: 0, marginTop: '3px' }} />
+                      <span><strong>Homophones grammaticaux clés :</strong> distinction entre <em>a / à</em>, <em>ou / où</em>, <em>son / sont</em>, <em>ce / se</em>, <em>c'est / s'est / ses / ces</em>.</span>
+                    </li>
+                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                      <Check size={18} className="text-emerald" style={{ flexShrink: 0, marginTop: '3px' }} />
+                      <span><strong>Terminaisons verbales fréquentes :</strong> distinction entre le participe passé en <em>-é</em> et l'infinitif en <em>-er</em> (astuce du verbe mordre).</span>
+                    </li>
+                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                      <Check size={18} className="text-emerald" style={{ flexShrink: 0, marginTop: '3px' }} />
+                      <span><strong>Mots fréquents et régularités :</strong> consonnes doubles, cédille devant <em>a, o, u</em> et pluriel des noms composés simples.</span>
+                    </li>
+                  </ul>
+                  <button className="btn btn-primary" onClick={() => setActiveFrenchTab('conjugaison')}>
+                    <ArrowLeft size={16} /> Retour au test de conjugaison (verbe avoir)
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Grammaire Preview Card */}
+            {activeFrenchTab === 'grammaire' && (
+              <div className="module-container">
+                <div className="results-hero-card" style={{ textAlign: 'left', maxWidth: '780px', margin: '0 auto' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
+                    <div className="brand-logo-icon" style={{ background: 'var(--violet)' }}>
+                      <BookmarkCheck size={26} className="text-white" />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0 }}>Module Grammaire & Accords — Secondaire 1</h3>
+                      <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>Syntaxe et accords du PFEQ</p>
+                    </div>
+                  </div>
+                  <p style={{ color: 'var(--text-main)', fontSize: '1rem', lineHeight: '1.6' }}>
+                    Ce volet accompagne les élèves dans l'analyse de la phrase et les règles d'accord syntaxiques fondamentales :
+                  </p>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: '1.25rem 0', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                      <Check size={18} className="text-emerald" style={{ flexShrink: 0, marginTop: '3px' }} />
+                      <span><strong>Classes de mots & Groupes syntaxiques :</strong> identification du Groupe Nominal (GN), du Groupe Verbal (GV) et des donneurs/receveurs d'accord.</span>
+                    </li>
+                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                      <Check size={18} className="text-emerald" style={{ flexShrink: 0, marginTop: '3px' }} />
+                      <span><strong>Accords du participe passé :</strong> règle avec l'auxiliaire <em>être</em> (accord avec le sujet) et avec <em>avoir</em> (accord avec le CD placé avant).</span>
+                    </li>
+                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                      <Check size={18} className="text-emerald" style={{ flexShrink: 0, marginTop: '3px' }} />
+                      <span><strong>Sujets inversés et complexes :</strong> accord du verbe avec un sujet éloigné ou coordonné par <em>et</em>.</span>
+                    </li>
+                  </ul>
+                  <button className="btn btn-primary" onClick={() => setActiveFrenchTab('conjugaison')}>
+                    <ArrowLeft size={16} /> Retour au test de conjugaison (verbe avoir)
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         )}

@@ -30,7 +30,7 @@ export const ConjugationModule: React.FC<ConjugationModuleProps> = ({
   onOpenReference,
 }) => {
   // Questions State
-  const [questions, setQuestions] = useState<GeneratedQuestion[]>([]);
+  const [questions, setQuestions] = useState<GeneratedQuestion[]>(() => generate30Questions(VERB_AVOIR));
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [answers, setAnswers] = useState<AnswerRecord[]>([]);
 
@@ -48,7 +48,7 @@ export const ConjugationModule: React.FC<ConjugationModuleProps> = ({
   // Focus
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Initialize 30 questions
+  // Re-initialize 30 questions
   const initializeQuiz = () => {
     const qList = generate30Questions(VERB_AVOIR);
     setQuestions(qList);
@@ -65,7 +65,7 @@ export const ConjugationModule: React.FC<ConjugationModuleProps> = ({
   };
 
   useEffect(() => {
-    initializeQuiz();
+    inputRef.current?.focus();
   }, []);
 
   const currentQ = questions[currentIndex];
