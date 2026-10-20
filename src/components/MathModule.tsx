@@ -1,115 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Calculator, Sparkles, CheckCircle2, XCircle, ArrowRight, RotateCcw, Trophy, BookOpen } from 'lucide-react';
+import {
+  Calculator,
+  Sparkles,
+  CheckCircle2,
+  XCircle,
+  ArrowRight,
+  RotateCcw,
+  Trophy,
+  BookOpen,
+  BookCheck,
+  Zap,
+  Target,
+  Flame,
+} from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { soundManager } from '../utils/soundEffects';
-
-interface MathQuestion {
-  id: number;
-  prompt: string;
-  topic: string;
-  options: string[];
-  correct: string;
-  explanation: string;
-}
-
-const MATH_QUESTIONS: MathQuestion[] = [
-  {
-    id: 1,
-    topic: 'Priorité des opérations (PEMDAS)',
-    prompt: 'Calcule : 5 + 3 × 4',
-    options: ['32', '17', '20', '12'],
-    correct: '17',
-    explanation: 'La multiplication est prioritaire sur l’addition : 3 × 4 = 12, puis 5 + 12 = 17.',
-  },
-  {
-    id: 2,
-    topic: 'Nombres entiers relatifs',
-    prompt: 'Calcule : (-7) + (+12)',
-    options: ['-5', '5', '-19', '19'],
-    correct: '5',
-    explanation: 'On soustrait les valeurs absolues et on garde le signe du plus grand : 12 - 7 = +5.',
-  },
-  {
-    id: 3,
-    topic: 'Fractions',
-    prompt: 'Simplifie la fraction 18 / 24 à sa plus simple expression :',
-    options: ['9 / 12', '3 / 4', '6 / 8', '2 / 3'],
-    correct: '3 / 4',
-    explanation: 'En divisant le numérateur et le dénominateur par leur PGCD (6), on obtient 3 / 4.',
-  },
-  {
-    id: 4,
-    topic: 'Priorité des opérations (PEMDAS)',
-    prompt: 'Calcule : (12 - 4) × (2 + 3)',
-    options: ['40', '22', '35', '45'],
-    correct: '40',
-    explanation: 'On calcule d’abord les parenthèses : (12 - 4) = 8 et (2 + 3) = 5. Ensuite 8 × 5 = 40.',
-  },
-  {
-    id: 5,
-    topic: 'Nombres entiers relatifs',
-    prompt: 'Calcule : (-4) × (-6)',
-    options: ['-24', '+24', '-10', '+10'],
-    correct: '+24',
-    explanation: 'Le produit de deux nombres de même signe (deux négatifs) donne un résultat positif : (-4) × (-6) = +24.',
-  },
-  {
-    id: 6,
-    topic: 'Fractions',
-    prompt: 'Calcule : 2/5 + 1/10',
-    options: ['3/15', '1/2', '3/10', '4/10'],
-    correct: '1/2',
-    explanation: 'On met au même dénominateur : 2/5 = 4/10. Donc 4/10 + 1/10 = 5/10, qui se simplifie en 1/2.',
-  },
-  {
-    id: 7,
-    topic: 'Pourcentages',
-    prompt: 'Quel est 25% de 80 ?',
-    options: ['15', '20', '25', '30'],
-    correct: '20',
-    explanation: '25% correspond au quart (1/4) d’une quantité : 80 ÷ 4 = 20.',
-  },
-  {
-    id: 8,
-    topic: 'Géométrie & Mesure',
-    prompt: 'Quel est le périmètre d’un rectangle de longueur 8 cm et de largeur 5 cm ?',
-    options: ['40 cm', '26 cm', '13 cm', '21 cm'],
-    correct: '26 cm',
-    explanation: 'Périmètre = 2 × (Longueur + Largeur) = 2 × (8 + 5) = 2 × 13 = 26 cm.',
-  },
-  {
-    id: 9,
-    topic: 'Géométrie & Mesure',
-    prompt: 'Quelle est l’aire d’un triangle de base 10 cm et de hauteur 6 cm ?',
-    options: ['60 cm²', '30 cm²', '16 cm²', '32 cm²'],
-    correct: '30 cm²',
-    explanation: 'Aire du triangle = (Base × Hauteur) ÷ 2 = (10 × 6) ÷ 2 = 60 ÷ 2 = 30 cm².',
-  },
-  {
-    id: 10,
-    topic: 'Nombres entiers relatifs',
-    prompt: 'Calcule : (-15) - (-8)',
-    options: ['-23', '-7', '+7', '+23'],
-    correct: '-7',
-    explanation: 'Soustraire un nombre négatif revient à ajouter son opposé : (-15) + 8 = -7.',
-  },
-  {
-    id: 11,
-    topic: 'Algèbre de base',
-    prompt: 'Si x = 4, quelle est la valeur de l’expression 3x + 5 ?',
-    options: ['12', '17', '27', '9'],
-    correct: '17',
-    explanation: 'On remplace x par 4 : (3 × 4) + 5 = 12 + 5 = 17.',
-  },
-  {
-    id: 12,
-    topic: 'Priorité des opérations (PEMDAS)',
-    prompt: 'Calcule : 40 ÷ 5 × 2 + 3',
-    options: ['7', '19', '11', '35'],
-    correct: '19',
-    explanation: 'La division et la multiplication ont la même priorité et s’exécutent de gauche à droite : 40 ÷ 5 = 8, puis 8 × 2 = 16, enfin 16 + 3 = 19.',
-  },
-];
+import { MATH_CHAPTER_1, MATH_CHAPTER_2, type MathQuestion } from '../data/mathQuestions';
 
 interface MathAnswerRecord {
   question: MathQuestion;
@@ -117,18 +23,67 @@ interface MathAnswerRecord {
   isCorrect: boolean;
 }
 
+type ChapterId = 1 | 2;
+type SessionMode = 'quick' | 'medium' | 'all';
+
+function shuffleList<T>(items: T[]): T[] {
+  return [...items].sort(() => Math.random() - 0.5);
+}
+
+function getQuestionsForSession(chapter: ChapterId, mode: SessionMode): MathQuestion[] {
+  const source = chapter === 1 ? MATH_CHAPTER_1 : MATH_CHAPTER_2;
+  const shuffled = shuffleList(source);
+
+  if (mode === 'quick') {
+    return shuffled.slice(0, Math.min(10, shuffled.length));
+  }
+  if (mode === 'medium') {
+    return shuffled.slice(0, Math.min(25, shuffled.length));
+  }
+  return shuffled; // 'all'
+}
+
 export const MathModule: React.FC = () => {
+  const [selectedChapter, setSelectedChapter] = useState<ChapterId>(2);
+  const [sessionMode, setSessionMode] = useState<SessionMode>('quick');
+
+  const [questions, setQuestions] = useState<MathQuestion[]>(() =>
+    getQuestionsForSession(2, 'quick')
+  );
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [score, setScore] = useState(0);
+  const [streak, setStreak] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const [answers, setAnswers] = useState<MathAnswerRecord[]>([]);
 
-  const q = MATH_QUESTIONS[currentIdx];
+  const restartQuiz = (chap: ChapterId = selectedChapter, mode: SessionMode = sessionMode) => {
+    const newQuestions = getQuestionsForSession(chap, mode);
+    setQuestions(newQuestions);
+    setCurrentIdx(0);
+    setSelectedOption(null);
+    setHasSubmitted(false);
+    setScore(0);
+    setStreak(0);
+    setAnswers([]);
+    setIsFinished(false);
+  };
+
+  const handleSelectChapter = (chap: ChapterId) => {
+    setSelectedChapter(chap);
+    restartQuiz(chap, sessionMode);
+  };
+
+  const handleSelectMode = (mode: SessionMode) => {
+    setSessionMode(mode);
+    restartQuiz(selectedChapter, mode);
+  };
+
+  const q = questions[currentIdx] || questions[0];
 
   const handleValidate = () => {
-    if (!selectedOption || hasSubmitted) return;
+    if (!selectedOption || hasSubmitted || !q) return;
     const isCorrect = selectedOption === q.correct;
     setHasSubmitted(true);
     setAnswers((prev) => [...prev, { question: q, selected: selectedOption, isCorrect }]);
@@ -136,13 +91,19 @@ export const MathModule: React.FC = () => {
     if (isCorrect) {
       soundManager.playCorrect();
       setScore((s) => s + 1);
+      const newStreak = streak + 1;
+      setStreak(newStreak);
+      if (newStreak % 5 === 0) {
+        soundManager.playStreak();
+      }
     } else {
       soundManager.playWrong();
+      setStreak(0);
     }
   };
 
   const handleNext = () => {
-    if (currentIdx + 1 < MATH_QUESTIONS.length) {
+    if (currentIdx + 1 < questions.length) {
       setCurrentIdx((prev) => prev + 1);
       setSelectedOption(null);
       setHasSubmitted(false);
@@ -151,24 +112,15 @@ export const MathModule: React.FC = () => {
     }
   };
 
-  const handleRestart = () => {
-    setCurrentIdx(0);
-    setSelectedOption(null);
-    setHasSubmitted(false);
-    setScore(0);
-    setAnswers([]);
-    setIsFinished(false);
-  };
-
   useEffect(() => {
-    if (isFinished) {
+    if (isFinished && questions.length > 0) {
       soundManager.playVictory();
-      const pct = (score / MATH_QUESTIONS.length) * 100;
+      const pct = (score / questions.length) * 100;
       if (pct >= 70) {
         try {
           confetti({
-            particleCount: 80,
-            spread: 70,
+            particleCount: 90,
+            spread: 75,
             origin: { y: 0.6 },
           });
         } catch {
@@ -176,26 +128,161 @@ export const MathModule: React.FC = () => {
         }
       }
     }
-  }, [isFinished, score]);
+  }, [isFinished, score, questions.length]);
 
-  const progressPct = Math.round(((currentIdx + (hasSubmitted ? 1 : 0)) / MATH_QUESTIONS.length) * 100);
+  const progressPct =
+    questions.length > 0
+      ? Math.round(((currentIdx + (hasSubmitted ? 1 : 0)) / questions.length) * 100)
+      : 0;
 
   return (
     <div className="module-container">
+      {/* Chapter Selection Bar */}
+      <div className="submodules-bar" style={{ marginBottom: '0.25rem' }}>
+        <div className="submodule-tabs">
+          <button
+            className={`submodule-tab ${selectedChapter === 1 ? 'active' : ''}`}
+            onClick={() => handleSelectChapter(1)}
+          >
+            <BookCheck size={16} />
+            <span>Chapitre 1 : Opérations & Fondamentaux</span>
+            <span
+              className="badge-soon"
+              style={{
+                background: selectedChapter === 1 ? '#e0f2fe' : '#e2e8f0',
+                color: selectedChapter === 1 ? '#0369a1' : '#64748b',
+              }}
+            >
+              12 Qs
+            </span>
+          </button>
+
+          <button
+            className={`submodule-tab ${selectedChapter === 2 ? 'active' : ''}`}
+            onClick={() => handleSelectChapter(2)}
+          >
+            <Calculator size={16} />
+            <span>Chapitre 2 : Nombres entiers relatifs</span>
+            <span
+              className="badge-soon"
+              style={{
+                background: selectedChapter === 2 ? '#ecfdf5' : '#e2e8f0',
+                color: selectedChapter === 2 ? '#047857' : '#64748b',
+              }}
+            >
+              52 Qs
+            </span>
+            <span className="live-dot" />
+          </button>
+        </div>
+
+        <div className="curriculum-tag">
+          <Sparkles size={14} className="text-amber" />
+          <span>Programme Québec • Secondaire 1</span>
+        </div>
+      </div>
+
+      {/* Header Banner */}
       <div className="subject-preview-header math-theme">
         <div className="preview-badge">
           <Calculator size={20} />
-          <span>Matière : Mathématiques • Secondaire 1 (Québec)</span>
+          <span>
+            Mathématiques • Secondaire 1 •{' '}
+            {selectedChapter === 1
+              ? 'Chapitre 1 : Fondamentaux'
+              : 'Chapitre 2 : Les Nombres Entiers Relatifs'}
+          </span>
         </div>
-        <h2>Entraînement Mathématiques — Défi des Fondamentaux</h2>
-        <p>12 questions interactives couvrant les priorités d’opérations (PEMDAS), les entiers relatifs, les fractions, la géométrie et l’algèbre.</p>
+        <h2>
+          {selectedChapter === 1
+            ? 'Chapitre 1 — Priorité des opérations, entiers et géométrie'
+            : 'Chapitre 2 — Nombres positifs, opposés, droite numérique, thermomètres, jetons & plan cartésien'}
+        </h2>
+        <p>
+          {selectedChapter === 1
+            ? 'Test de révision sur le calcul de base, la priorité PEMDAS, les fractions et périmètres.'
+            : 'Explore les entiers relatifs sous toutes leurs formes : opposés, thermomètres, problèmes de plongée, méthode des jetons, calculs et repérage dans les 4 quadrants.'}
+        </p>
       </div>
 
-      {!isFinished ? (
+      {/* Session Length Controls & HUD */}
+      {!isFinished && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '10px',
+            background: '#ffffff',
+            padding: '10px 16px',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-subtle)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+              <Target size={14} style={{ display: 'inline', marginRight: '4px' }} />
+              Longueur de session :
+            </span>
+            <button
+              className={`tab-btn ${sessionMode === 'quick' ? 'active' : ''}`}
+              style={{ padding: '4px 10px', fontSize: '0.8rem' }}
+              onClick={() => handleSelectMode('quick')}
+              title="10 questions sélectionnées au hasard"
+            >
+              Défi rapide (10 Qs)
+            </button>
+            {selectedChapter === 2 && (
+              <button
+                className={`tab-btn ${sessionMode === 'medium' ? 'active' : ''}`}
+                style={{ padding: '4px 10px', fontSize: '0.8rem' }}
+                onClick={() => handleSelectMode('medium')}
+                title="25 questions variées"
+              >
+                Approfondi (25 Qs)
+              </button>
+            )}
+            <button
+              className={`tab-btn ${sessionMode === 'all' ? 'active' : ''}`}
+              style={{ padding: '4px 10px', fontSize: '0.8rem' }}
+              onClick={() => handleSelectMode('all')}
+              title="Toutes les questions du chapitre"
+            >
+              Complet ({selectedChapter === 1 ? '12' : '52'} Qs)
+            </button>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            {streak > 1 && (
+              <span
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  fontWeight: 800,
+                  color: '#ea580c',
+                  fontSize: '0.88rem',
+                }}
+              >
+                <Flame size={16} /> {streak} de suite !
+              </span>
+            )}
+            <span style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+              Score : <strong style={{ color: 'var(--primary)' }}>{score}</strong> / {questions.length}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Main Question Card */}
+      {!isFinished && q ? (
         <div className="question-card">
           <div className="question-card-header">
             <span className="tense-badge badge-math">{q.topic}</span>
-            <span className="person-badge">Question {currentIdx + 1} / {MATH_QUESTIONS.length}</span>
+            <span className="person-badge">
+              Question {currentIdx + 1} / {questions.length}
+            </span>
           </div>
 
           {/* Mini progress bar */}
@@ -237,7 +324,11 @@ export const MathModule: React.FC = () => {
           </div>
 
           {hasSubmitted && (
-            <div className={`feedback-alert ${selectedOption === q.correct ? 'feedback-success' : 'feedback-error'}`}>
+            <div
+              className={`feedback-alert ${
+                selectedOption === q.correct ? 'feedback-success' : 'feedback-error'
+              }`}
+            >
               <div className="feedback-icon-col">
                 {selectedOption === q.correct ? (
                   <CheckCircle2 size={32} className="text-emerald" />
@@ -247,7 +338,9 @@ export const MathModule: React.FC = () => {
               </div>
               <div className="feedback-body-col">
                 <h4 className="feedback-heading">
-                  {selectedOption === q.correct ? 'Exactement ! Bravo !' : `Incorrect. La réponse était : ${q.correct}`}
+                  {selectedOption === q.correct
+                    ? 'Exactement ! Bravo !'
+                    : `Incorrect. La bonne réponse était : ${q.correct}`}
                 </h4>
                 <p className="feedback-rule-desc">{q.explanation}</p>
               </div>
@@ -256,7 +349,11 @@ export const MathModule: React.FC = () => {
 
           <div className="question-footer">
             <div className="footer-left">
-              <span className="info-subtle">Score actuel : {score} point{score > 1 ? 's' : ''}</span>
+              <span className="info-subtle">
+                {selectedChapter === 2
+                  ? 'Chapitre 2 : Nombres entiers relatifs'
+                  : 'Chapitre 1 : Opérations fondamentales'}
+              </span>
             </div>
             <div className="footer-right">
               {!hasSubmitted ? (
@@ -269,27 +366,78 @@ export const MathModule: React.FC = () => {
                 </button>
               ) : (
                 <button className="btn btn-primary btn-large" onClick={handleNext}>
-                  {currentIdx + 1 < MATH_QUESTIONS.length ? 'Question suivante' : 'Voir mon bilan'}
+                  {currentIdx + 1 < questions.length ? 'Question suivante' : 'Voir mon bilan'}
                   <ArrowRight size={18} />
                 </button>
               )}
             </div>
           </div>
         </div>
-      ) : (
+      ) : isFinished ? (
         <div className="results-wrapper">
           <div className="results-hero-card">
             <div className="results-trophy-icon">
               <Trophy size={48} className="text-amber" />
             </div>
-            <h3>Défi Mathématiques Secondaire 1 Terminé !</h3>
-            <p className="metric-number">{score} / {MATH_QUESTIONS.length}</p>
-            <p className="results-subtext">
-              Taux de réussite : <strong>{Math.round((score / MATH_QUESTIONS.length) * 100)}%</strong> — {score >= 10 ? 'Excellente maîtrise des notions clés !' : score >= 7 ? 'Bonne base, révise les quelques erreurs ci-dessous.' : 'Continue de t’entraîner pour consolider tes réflexes !'}
+            <h3>
+              {selectedChapter === 2
+                ? 'Chapitre 2 : Nombres Entiers Relatifs — Défi Terminé !'
+                : 'Chapitre 1 : Fondamentaux — Défi Terminé !'}
+            </h3>
+            <p className="metric-number">
+              {score} / {questions.length}
             </p>
-            <button className="btn btn-primary btn-large" onClick={handleRestart}>
-              <RotateCcw size={18} /> Recommencer le test
-            </button>
+            <p className="results-subtext">
+              Taux de réussite :{' '}
+              <strong>{Math.round((score / questions.length) * 100)}%</strong> —{' '}
+              {score / questions.length >= 0.85
+                ? 'Excellente maîtrise ! Tu as assimilé les concepts clés du chapitre avec brio.'
+                : score / questions.length >= 0.65
+                ? 'Bonne compréhension ! Révise les quelques questions manquées ci-dessous.'
+                : 'Continue de t’entraîner pour automatiser les règles de signes et de repérage !'}
+            </p>
+
+            <div
+              style={{
+                display: 'flex',
+                gap: '12px',
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+                marginTop: '1rem',
+              }}
+            >
+              <button
+                className="btn btn-primary btn-large"
+                onClick={() => restartQuiz(selectedChapter, sessionMode)}
+              >
+                <RotateCcw size={18} /> Recommencer ce chapitre
+              </button>
+              {selectedChapter === 1 ? (
+                <button
+                  className="btn btn-outline"
+                  onClick={() => handleSelectChapter(2)}
+                  style={{
+                    borderColor: 'var(--primary)',
+                    color: 'var(--primary)',
+                    background: '#ffffff',
+                  }}
+                >
+                  <Zap size={18} /> Passer au Chapitre 2 (Entiers relatifs)
+                </button>
+              ) : (
+                <button
+                  className="btn btn-outline"
+                  onClick={() => handleSelectChapter(1)}
+                  style={{
+                    borderColor: 'var(--primary)',
+                    color: 'var(--primary)',
+                    background: '#ffffff',
+                  }}
+                >
+                  <BookCheck size={18} /> Réviser le Chapitre 1
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Question Review List */}
@@ -302,7 +450,9 @@ export const MathModule: React.FC = () => {
               {answers.map((item, idx) => (
                 <div
                   key={idx}
-                  className={`review-item ${item.isCorrect ? 'review-item-correct' : 'review-item-wrong'}`}
+                  className={`review-item ${
+                    item.isCorrect ? 'review-item-correct' : 'review-item-wrong'
+                  }`}
                 >
                   <div className="review-status-col">
                     {item.isCorrect ? (
@@ -313,12 +463,18 @@ export const MathModule: React.FC = () => {
                   </div>
                   <div className="review-content-col">
                     <div className="review-top-row">
-                      <span className="review-q-num">Q{idx + 1}. {item.question.topic}</span>
+                      <span className="review-q-num">
+                        Q{idx + 1}. {item.question.topic}
+                      </span>
                       <span className="review-q-prompt">« {item.question.prompt} »</span>
                     </div>
                     <div className="review-ans-row">
                       <span className="review-label">Ta réponse :</span>
-                      <span className={item.isCorrect ? 'text-emerald font-semibold' : 'text-rose font-semibold'}>
+                      <span
+                        className={
+                          item.isCorrect ? 'text-emerald font-semibold' : 'text-rose font-semibold'
+                        }
+                      >
                         {item.selected}
                       </span>
                       {!item.isCorrect && (
@@ -334,7 +490,7 @@ export const MathModule: React.FC = () => {
             </div>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

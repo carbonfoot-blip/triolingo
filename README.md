@@ -3,8 +3,10 @@
 **TrioLingo** est une application web interactive et ludique conçue spécialement pour accompagner les élèves de **Secondaire 1** au Québec dans leurs apprentissages fondamentaux.
 
 L'application est structurée autour de trois grandes matières du programme québécois :
-1. 📚 **Français** *(Module actif : Conjugaison complète du verbe avoir)*
-2. 📐 **Mathématiques** *(Priorité des opérations PEMDAS, entiers relatifs, fractions)*
+1. 📚 **Français** *(Conjugaison complète du verbe avoir sur 15 temps + aide-mémoire)*
+2. 📐 **Mathématiques** :
+   - **Chapitre 1 : Opérations fondamentales & Priorités (12 questions)** (PEMDAS, fractions, périmètres et aires)
+   - **Chapitre 2 : Les Nombres Entiers Relatifs (52 questions)** (Positifs/négatifs, opposés, droites numériques, ordre croissant/décroissant, thermomètres, problèmes concrets comme l'oiseau en plongeon, méthode des jetons & paires nulles, additions, soustractions et repérage dans les 4 quadrants du plan cartésien)
 3. 🌍 **Géographie** *(Territoires urbains, régions du Québec, biomes et fleuve Saint-Laurent)*
 
 ---
