@@ -32,7 +32,11 @@ function shuffleList<T>(items: T[]): T[] {
 
 function getQuestionsForSession(chapter: ChapterId, mode: SessionMode): MathQuestion[] {
   const source = chapter === 1 ? MATH_CHAPTER_1 : MATH_CHAPTER_2;
-  const shuffled = shuffleList(source);
+  const withShuffledOptions = source.map((q) => ({
+    ...q,
+    options: shuffleList([...q.options]),
+  }));
+  const shuffled = shuffleList(withShuffledOptions);
 
   if (mode === 'quick') {
     return shuffled.slice(0, Math.min(10, shuffled.length));

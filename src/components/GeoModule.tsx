@@ -25,7 +25,7 @@ const GEO_QUESTIONS: GeoQuestion[] = [
     id: 2,
     topic: 'Territoire urbain',
     prompt: 'Quel fleuve majeur borde les villes de Montréal, Trois-Rivières et Québec ?',
-    options: ['Le fleuve Saint-Laurent', 'La rivière Saguenay', 'La rivière des Outaouais', 'Le fleuve Richelieu'],
+    options: ['La rivière Saguenay', 'La rivière des Outaouais', 'Le fleuve Saint-Laurent', 'Le fleuve Richelieu'],
     correct: 'Le fleuve Saint-Laurent',
     explanation: 'Le Saint-Laurent est la voie maritime principale reliant les Grands Lacs à l’océan Atlantique.',
   },
@@ -41,7 +41,7 @@ const GEO_QUESTIONS: GeoQuestion[] = [
     id: 4,
     topic: 'Territoire urbain',
     prompt: 'Quelle est la métropole la plus populeuse et le principal pôle économique du Québec ?',
-    options: ['Québec', 'Montréal', 'Laval', 'Sherbrooke'],
+    options: ['Québec', 'Laval', 'Montréal', 'Sherbrooke'],
     correct: 'Montréal',
     explanation: 'Montréal regroupe près de la moitié de la population métropolitaine du Québec et constitue sa métropole économique.',
   },
@@ -49,7 +49,7 @@ const GEO_QUESTIONS: GeoQuestion[] = [
     id: 5,
     topic: 'Territoire urbain',
     prompt: 'Quel terme désigne le phénomène où la ville s’étend sur les terres agricoles et les espaces naturels périphériques ?',
-    options: ['L’étalement urbain', 'L’exode rural', 'La déforestation', 'L’îlot de fraîcheur'],
+    options: ['L’exode rural', 'La déforestation', 'L’îlot de fraîcheur', 'L’étalement urbain'],
     correct: 'L’étalement urbain',
     explanation: 'L’étalement urbain se caractérise par la multiplication des banlieues et la dépendance à l’automobile.',
   },
@@ -58,8 +58,8 @@ const GEO_QUESTIONS: GeoQuestion[] = [
     topic: 'Hydrographie & Voie maritime',
     prompt: 'Quels sont les trois tronçons majeurs du fleuve Saint-Laurent, de l’amont vers l’aval ?',
     options: [
-      'Le fleuve fluvial, l’estuaire et le golfe',
       'Le delta, le fjord et le bassin',
+      'Le fleuve fluvial, l’estuaire et le golfe',
       'Le lac Saint-Pierre, les rapides et la baie',
       'L’affluent, le canal et l’océan',
     ],
@@ -70,7 +70,7 @@ const GEO_QUESTIONS: GeoQuestion[] = [
     id: 7,
     topic: 'Ressources naturelles',
     prompt: 'Quel grand ensemble géologique recouvre près de 90 % du territoire québécois et regorge de gisements miniers ?',
-    options: ['Le Bouclier canadien', 'Les Appalaches', 'Les Basses-terres du Saint-Laurent', 'La plaine côtière'],
+    options: ['Les Appalaches', 'Les Basses-terres du Saint-Laurent', 'Le Bouclier canadien', 'La plaine côtière'],
     correct: 'Le Bouclier canadien',
     explanation: 'Le Bouclier canadien est l’une des plus vieilles formations rocheuses de la planète, riche en fer, or, cuivre et cours d’eau.',
   },
@@ -78,7 +78,7 @@ const GEO_QUESTIONS: GeoQuestion[] = [
     id: 8,
     topic: 'Ressources & Énergie',
     prompt: 'Dans quelle région du nord québécois se trouve le gigantesque complexe hydroélectrique La Grande (Baie-James) ?',
-    options: ['Le Nord-du-Québec', 'La Gaspésie', 'L’Estrie', 'La Mauricie'],
+    options: ['La Gaspésie', 'L’Estrie', 'La Mauricie', 'Le Nord-du-Québec'],
     correct: 'Le Nord-du-Québec',
     explanation: 'Le complexe hydroélectrique de la Baie-James dans le Nord-du-Québec produit une grande partie de l’électricité québécoise.',
   },
@@ -86,7 +86,7 @@ const GEO_QUESTIONS: GeoQuestion[] = [
     id: 9,
     topic: 'Territoires autochtones',
     prompt: 'Quel peuple autochtone habite traditionnellement les communautés côtières du Nunavik au nord du Québec ?',
-    options: ['Les Inuits', 'Les Mohawks', 'Les Hurons-Wendat', 'Les Micmacs'],
+    options: ['Les Mohawks', 'Les Inuits', 'Les Hurons-Wendat', 'Les Micmacs'],
     correct: 'Les Inuits',
     explanation: 'Les Inuits vivent dans 14 villages nordiques du Nunavik, au nord du 55e parallèle.',
   },
@@ -94,7 +94,7 @@ const GEO_QUESTIONS: GeoQuestion[] = [
     id: 10,
     topic: 'Risques naturels',
     prompt: 'Quel risque naturel saisonnier touche fréquemment les rives du Québec au printemps à la fonte des neiges ?',
-    options: ['Les inondations (crues)', 'Les tsunamis', 'Les éruptions volcaniques', 'Les ouragans tropicaux'],
+    options: ['Les tsunamis', 'Les inondations (crues)', 'Les éruptions volcaniques', 'Les ouragans tropicaux'],
     correct: 'Les inondations (crues)',
     explanation: 'Les crues printanières et les embâcles de glace provoquent régulièrement des inondations sur les rives fluviales.',
   },
@@ -102,7 +102,7 @@ const GEO_QUESTIONS: GeoQuestion[] = [
     id: 11,
     topic: 'Territoire urbain',
     prompt: 'Comment nomme-t-on l’augmentation localisée des températures en ville causée par les surfaces asphaltées et le manque de végétation ?',
-    options: ['Un îlot de chaleur', 'Un effet de serre', 'Une canicule côtière', 'Une inversion thermique'],
+    options: ['Un effet de serre', 'Une canicule côtière', 'Un îlot de chaleur', 'Une inversion thermique'],
     correct: 'Un îlot de chaleur',
     explanation: 'Les matériaux sombres et le manque d’arbres créent des îlots de chaleur urbains.',
   },
@@ -110,7 +110,7 @@ const GEO_QUESTIONS: GeoQuestion[] = [
     id: 12,
     topic: 'Territoires forestiers',
     prompt: 'Quelle est la principale essence résineuse exploitée pour la pâte à papier et le bois d’œuvre dans la forêt boréale québécoise ?',
-    options: ['L’épinette noire', 'L’érable à sucre', 'Le bouleau blanc', 'Le chêne rouge'],
+    options: ['L’érable à sucre', 'Le bouleau blanc', 'Le chêne rouge', 'L’épinette noire'],
     correct: 'L’épinette noire',
     explanation: 'L’épinette noire est l’arbre emblématique de la taïga québécoise en raison de sa résistance au froid.',
   },
@@ -122,7 +122,19 @@ interface GeoAnswerRecord {
   isCorrect: boolean;
 }
 
+function shuffleList<T>(items: T[]): T[] {
+  return [...items].sort(() => Math.random() - 0.5);
+}
+
+function prepareGeoQuestions(): GeoQuestion[] {
+  return shuffleList(GEO_QUESTIONS).map((q) => ({
+    ...q,
+    options: shuffleList([...q.options]),
+  }));
+}
+
 export const GeoModule: React.FC = () => {
+  const [questions, setQuestions] = useState<GeoQuestion[]>(() => prepareGeoQuestions());
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -130,10 +142,10 @@ export const GeoModule: React.FC = () => {
   const [isFinished, setIsFinished] = useState(false);
   const [answers, setAnswers] = useState<GeoAnswerRecord[]>([]);
 
-  const q = GEO_QUESTIONS[currentIdx];
+  const q = questions[currentIdx] || questions[0];
 
   const handleValidate = () => {
-    if (!selectedOption || hasSubmitted) return;
+    if (!selectedOption || hasSubmitted || !q) return;
     const isCorrect = selectedOption === q.correct;
     setHasSubmitted(true);
     setAnswers((prev) => [...prev, { question: q, selected: selectedOption, isCorrect }]);
@@ -147,7 +159,7 @@ export const GeoModule: React.FC = () => {
   };
 
   const handleNext = () => {
-    if (currentIdx + 1 < GEO_QUESTIONS.length) {
+    if (currentIdx + 1 < questions.length) {
       setCurrentIdx((prev) => prev + 1);
       setSelectedOption(null);
       setHasSubmitted(false);
@@ -157,6 +169,7 @@ export const GeoModule: React.FC = () => {
   };
 
   const handleRestart = () => {
+    setQuestions(prepareGeoQuestions());
     setCurrentIdx(0);
     setSelectedOption(null);
     setHasSubmitted(false);
@@ -166,9 +179,9 @@ export const GeoModule: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isFinished) {
+    if (isFinished && questions.length > 0) {
       soundManager.playVictory();
-      const pct = (score / GEO_QUESTIONS.length) * 100;
+      const pct = (score / questions.length) * 100;
       if (pct >= 70) {
         try {
           confetti({
@@ -181,9 +194,12 @@ export const GeoModule: React.FC = () => {
         }
       }
     }
-  }, [isFinished, score]);
+  }, [isFinished, score, questions.length]);
 
-  const progressPct = Math.round(((currentIdx + (hasSubmitted ? 1 : 0)) / GEO_QUESTIONS.length) * 100);
+  const progressPct =
+    questions.length > 0
+      ? Math.round(((currentIdx + (hasSubmitted ? 1 : 0)) / questions.length) * 100)
+      : 0;
 
   return (
     <div className="module-container">
@@ -196,11 +212,11 @@ export const GeoModule: React.FC = () => {
         <p>12 questions interactives sur les territoires québécois : métropoles, étalement urbain, Saint-Laurent, biomes et ressources naturelles.</p>
       </div>
 
-      {!isFinished ? (
+      {!isFinished && q ? (
         <div className="question-card">
           <div className="question-card-header">
             <span className="tense-badge badge-geo">{q.topic}</span>
-            <span className="person-badge">Question {currentIdx + 1} / {GEO_QUESTIONS.length}</span>
+            <span className="person-badge">Question {currentIdx + 1} / {questions.length}</span>
           </div>
 
           {/* Mini progress bar */}
@@ -274,23 +290,23 @@ export const GeoModule: React.FC = () => {
                 </button>
               ) : (
                 <button className="btn btn-primary btn-large" onClick={handleNext}>
-                  {currentIdx + 1 < GEO_QUESTIONS.length ? 'Question suivante' : 'Voir mon bilan'}
+                  {currentIdx + 1 < questions.length ? 'Question suivante' : 'Voir mon bilan'}
                   <ArrowRight size={18} />
                 </button>
               )}
             </div>
           </div>
         </div>
-      ) : (
+      ) : isFinished ? (
         <div className="results-wrapper">
           <div className="results-hero-card">
             <div className="results-trophy-icon">
               <Trophy size={48} className="text-amber" />
             </div>
             <h3>Défi Géographie Secondaire 1 Terminé !</h3>
-            <p className="metric-number">{score} / {GEO_QUESTIONS.length}</p>
+            <p className="metric-number">{score} / {questions.length}</p>
             <p className="results-subtext">
-              Taux de réussite : <strong>{Math.round((score / GEO_QUESTIONS.length) * 100)}%</strong> — {score >= 10 ? 'Superbe connaissance des territoires du Québec !' : score >= 7 ? 'Bon résultat, revois les concepts manqués ci-dessous.' : 'Continue d’explorer les notions de géographie pour t’améliorer !'}
+              Taux de réussite : <strong>{Math.round((score / questions.length) * 100)}%</strong> — {score >= 10 ? 'Superbe connaissance des territoires du Québec !' : score >= 7 ? 'Bon résultat, revois les concepts manqués ci-dessous.' : 'Continue d’explorer les notions de géographie pour t’améliorer !'}
             </p>
             <button className="btn btn-primary btn-large" onClick={handleRestart}>
               <RotateCcw size={18} /> Recommencer le test
@@ -339,7 +355,7 @@ export const GeoModule: React.FC = () => {
             </div>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 };
