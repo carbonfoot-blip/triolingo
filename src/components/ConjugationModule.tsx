@@ -11,26 +11,31 @@ import {
   Flame,
   Zap,
   RotateCcw,
+  ArrowLeftRight,
 } from 'lucide-react';
 import {
   generate30Questions,
   isAnswerCorrect,
-  VERB_AVOIR,
+  type VerbData,
+  type GeneratedQuestion,
 } from '../data/conjugationData';
-import type { GeneratedQuestion } from '../data/conjugationData';
+import { VerbSelector } from './VerbSelector';
 import { QuizResults, type AnswerRecord } from './QuizResults';
 import { soundManager } from '../utils/soundEffects';
 
 interface ConjugationModuleProps {
-  onOpenReference: () => void;
+  onOpenReference: (verb?: VerbData) => void;
   onUpdateGlobalStats?: (streak: number, xp: number) => void;
 }
 
 export const ConjugationModule: React.FC<ConjugationModuleProps> = ({
   onOpenReference,
 }) => {
+  // Selected verb state (null initially so the student chooses a verb to start)
+  const [selectedVerb, setSelectedVerb] = useState<VerbData | null>(null);
+
   // Questions State
-  const [questions, setQuestions] = useState<GeneratedQuestion[]>(() => generate30Questions(VERB_AVOIR));
+  const [questions, setQuestions] = useState<GeneratedQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [answers, setAnswers] = useState<AnswerRecord[]>([]);
 
@@ -48,9 +53,10 @@ export const ConjugationModule: React.FC<ConjugationModuleProps> = ({
   // Focus
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Re-initialize 30 questions
-  const initializeQuiz = () => {
-    const qList = generate30Questions(VERB_AVOIR);
+  // Initialize 30 questions for a chosen verb
+  const handleStartVerbQuiz = (verb: VerbData) => {
+    setSelectedVerb(verb);
+    const qList = generate30Questions(verb);
     setQuestions(qList);
     setCurrentIndex(0);
     setAnswers([]);
@@ -64,9 +70,50 @@ export const ConjugationModule: React.FC<ConjugationModuleProps> = ({
     }, 150);
   };
 
+  // Re-start current verb with 30 fresh questions
+  const reinitializeCurrentVerb = () => {
+    if (!selectedVerb) return;
+    const qList = generate30Questions(selectedVerb);
+    setQuestions(qList);
+    setCurrentIndex(0);
+    setAnswers([]);
+    setUserInput('');
+    setSelectedOption(null);
+    setHasSubmitted(false);
+    setIsCurrentCorrect(false);
+    setStreak(0);
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 150);
+  };
+
+  // Return to verb selection
+  const handleReturnToSelector = () => {
+    setSelectedVerb(null);
+    setQuestions([]);
+    setCurrentIndex(0);
+    setAnswers([]);
+    setUserInput('');
+    setSelectedOption(null);
+    setHasSubmitted(false);
+    setIsCurrentCorrect(false);
+  };
+
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    if (selectedVerb) {
+      inputRef.current?.focus();
+    }
+  }, [selectedVerb, currentIndex, inputMode]);
+
+  // If no verb selected, display the Verb Selector screen
+  if (!selectedVerb) {
+    return (
+      <VerbSelector
+        onSelectVerb={handleStartVerbQuiz}
+        onOpenReference={(verb) => onOpenReference(verb)}
+      />
+    );
+  }
 
   const currentQ = questions[currentIndex];
   const isFinished = questions.length > 0 && currentIndex >= questions.length;
@@ -133,14 +180,20 @@ export const ConjugationModule: React.FC<ConjugationModuleProps> = ({
     return (
       <QuizResults
         answers={answers}
-        onRegenerate={initializeQuiz}
-        onOpenReference={onOpenReference}
+        verbName={selectedVerb.name}
+        onRegenerate={reinitializeCurrentVerb}
+        onOpenReference={() => onOpenReference(selectedVerb)}
+        onChangeVerb={handleReturnToSelector}
       />
     );
   }
 
   if (!currentQ) {
-    return <div className="loading-state">Génération des 30 questions de conjugaison...</div>;
+    return (
+      <div className="loading-state">
+        Génération des 30 questions de conjugaison pour le verbe {selectedVerb.name}...
+      </div>
+    );
   }
 
   const progressPercent = ((currentIndex + 1) / questions.length) * 100;
@@ -150,10 +203,22 @@ export const ConjugationModule: React.FC<ConjugationModuleProps> = ({
     <div className="module-container">
       {/* Top Banner & Verb Selector */}
       <div className="module-top-bar">
-        <div className="verb-select-pill">
-          <span className="pill-prefix">Verbe étudié :</span>
-          <span className="pill-verb">avoir</span>
-          <span className="badge-poc">POC Sec 1</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+          <div className="verb-select-pill">
+            <span className="pill-prefix">Verbe étudié :</span>
+            <span className="pill-verb">{selectedVerb.name}</span>
+            <span className="badge-poc">{selectedVerb.group}</span>
+          </div>
+
+          <button
+            type="button"
+            className="btn btn-outline btn-sm change-verb-btn"
+            onClick={handleReturnToSelector}
+            title="Choisir un autre verbe dans la banque"
+          >
+            <ArrowLeftRight size={14} />
+            <span>Changer de verbe</span>
+          </button>
         </div>
 
         <div className="hud-stats-row">
@@ -168,12 +233,13 @@ export const ConjugationModule: React.FC<ConjugationModuleProps> = ({
           </div>
 
           <button
+            type="button"
             className="aide-memoire-btn"
-            onClick={onOpenReference}
-            title="Consulter le tableau complet des 15 temps"
+            onClick={() => onOpenReference(selectedVerb)}
+            title={`Consulter le tableau complet des 15 temps du verbe ${selectedVerb.name}`}
           >
             <BookOpen size={16} />
-            <span>Aide-mémoire</span>
+            <span>Aide-mémoire ({selectedVerb.name})</span>
           </button>
         </div>
       </div>
@@ -207,6 +273,7 @@ export const ConjugationModule: React.FC<ConjugationModuleProps> = ({
           </div>
           <div className="mode-toggle-group">
             <button
+              type="button"
               className={`mode-btn ${inputMode === 'text' ? 'active' : ''}`}
               onClick={() => setInputMode('text')}
               title="Écrire la réponse au clavier"
@@ -215,6 +282,7 @@ export const ConjugationModule: React.FC<ConjugationModuleProps> = ({
               <span>Clavier</span>
             </button>
             <button
+              type="button"
               className={`mode-btn ${inputMode === 'choice' ? 'active' : ''}`}
               onClick={() => setInputMode('choice')}
               title="Choisir parmi 4 options"
@@ -248,7 +316,7 @@ export const ConjugationModule: React.FC<ConjugationModuleProps> = ({
                         : 'input-error'
                       : ''
                   }`}
-                  placeholder="Tape la forme conjuguée ici (ex: auriez ou vous auriez)..."
+                  placeholder="Tape la forme conjuguée ici..."
                   value={userInput}
                   onChange={(e) => setUserInput(e.target.value)}
                   onKeyDown={handleKeyDown}
@@ -293,6 +361,7 @@ export const ConjugationModule: React.FC<ConjugationModuleProps> = ({
                 return (
                   <button
                     key={i}
+                    type="button"
                     className={optionClass}
                     onClick={() => !hasSubmitted && setSelectedOption(opt)}
                     disabled={hasSubmitted}
@@ -346,9 +415,10 @@ export const ConjugationModule: React.FC<ConjugationModuleProps> = ({
         <div className="question-footer">
           <div className="footer-left">
             <button
+              type="button"
               className="btn btn-ghost"
-              onClick={initializeQuiz}
-              title="Recommencer avec 30 nouvelles questions"
+              onClick={reinitializeCurrentVerb}
+              title="Recommencer avec 30 nouvelles questions sur ce verbe"
             >
               <RotateCcw size={16} />
               Recommencer
@@ -358,6 +428,7 @@ export const ConjugationModule: React.FC<ConjugationModuleProps> = ({
           <div className="footer-right">
             {!hasSubmitted ? (
               <button
+                type="button"
                 className="btn btn-primary btn-large btn-glow"
                 onClick={handleValidate}
                 disabled={
@@ -370,6 +441,7 @@ export const ConjugationModule: React.FC<ConjugationModuleProps> = ({
               </button>
             ) : (
               <button
+                type="button"
                 className="btn btn-primary btn-large btn-glow"
                 onClick={handleNext}
                 autoFocus

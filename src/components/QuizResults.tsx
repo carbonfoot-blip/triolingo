@@ -10,6 +10,7 @@ import {
   ChevronUp,
   Award,
   Zap,
+  Sparkles,
 } from 'lucide-react';
 import type { GeneratedQuestion, TenseKey } from '../data/conjugationData';
 import { TENSES } from '../data/conjugationData';
@@ -23,14 +24,18 @@ export interface AnswerRecord {
 
 interface QuizResultsProps {
   answers: AnswerRecord[];
+  verbName?: string;
   onRegenerate: () => void;
   onOpenReference: () => void;
+  onChangeVerb?: () => void;
 }
 
 export const QuizResults: React.FC<QuizResultsProps> = ({
   answers,
+  verbName = 'étudié',
   onRegenerate,
   onOpenReference,
+  onChangeVerb,
 }) => {
   const [showDetails, setShowDetails] = useState(false);
 
@@ -72,11 +77,11 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
   });
 
   const getEncouragement = () => {
-    if (percentage === 100) return { title: 'Score parfait ! 🎉', desc: "Tu maîtrises le verbe avoir sur le bout des doigts !" };
-    if (percentage >= 90) return { title: 'Impressionnant ! 🌟', desc: "Une performance digne d'un champion du Secondaire 1 !" };
-    if (percentage >= 75) return { title: 'Très bon résultat ! 👏', desc: "Tu as de très bonnes bases. Quelques révisions et tu auras 100% !" };
-    if (percentage >= 50) return { title: 'Bon effort ! 👍', desc: "Tu es sur la bonne voie. Prends le temps de revoir les temps plus difficiles !" };
-    return { title: 'Continue de t’entraîner ! 💪', desc: "La conjugaison demande de la répétition. Consulte l'aide-mémoire et recommence !" };
+    if (percentage === 100) return { title: 'Score parfait ! 🎉', desc: `Tu maîtrises le verbe ${verbName} sur le bout des doigts !` };
+    if (percentage >= 90) return { title: 'Impressionnant ! 🌟', desc: `Une performance remarquable sur le verbe ${verbName} !` };
+    if (percentage >= 75) return { title: 'Très bon résultat ! 👏', desc: `Tu as de très bonnes bases sur le verbe ${verbName}. Encore quelques détails et c'est parfait !` };
+    if (percentage >= 50) return { title: 'Bon effort ! 👍', desc: `Tu progresses bien sur le verbe ${verbName}. Prends le temps de revoir les temps plus délicats !` };
+    return { title: 'Continue de t’entraîner ! 💪', desc: `La conjugaison du verbe ${verbName} demande de la répétition. Consulte l'aide-mémoire et recommence !` };
   };
 
   const encouragement = getEncouragement();
@@ -121,26 +126,32 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
                 {percentage >= 90 ? 'A+' : percentage >= 80 ? 'A' : percentage >= 70 ? 'B' : percentage >= 60 ? 'C' : 'Pratique requise'}
               </span>
             </div>
-            <span className="metric-sub">Conjugaison Verbe Avoir</span>
+            <span className="metric-sub">Verbe {verbName}</span>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="results-actions">
+        <div className="results-actions" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', justifyContent: 'center' }}>
           <button className="btn btn-primary btn-large btn-glow" onClick={onRegenerate}>
             <RotateCcw size={20} />
-            Régénérer 30 nouvelles questions
+            Recommencer ce verbe ({verbName})
           </button>
-          <button className="btn btn-secondary btn-large" onClick={onOpenReference}>
+          {onChangeVerb && (
+            <button className="btn btn-secondary btn-large" onClick={onChangeVerb}>
+              <Sparkles size={20} />
+              Choisir un autre verbe
+            </button>
+          )}
+          <button className="btn btn-outline btn-large" onClick={onOpenReference}>
             <BookOpen size={20} />
-            Consulter l'aide-mémoire complet
+            Aide-mémoire ({verbName})
           </button>
         </div>
       </div>
 
       {/* Tense Performance Breakdown */}
       <div className="results-breakdown-card">
-        <h3 className="section-card-title">Analyse par temps de verbe</h3>
+        <h3 className="section-card-title">Analyse par temps de verbe ({verbName})</h3>
         <p className="section-card-subtitle">
           Vérifie les temps que tu maîtrises et ceux à perfectionner :
         </p>

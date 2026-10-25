@@ -3,7 +3,7 @@
 **TrioLingo** est une application web interactive et ludique conçue spécialement pour accompagner les élèves de **Secondaire 1** au Québec dans leurs apprentissages fondamentaux.
 
 L'application est structurée autour de trois grandes matières du programme québécois :
-1. 📚 **Français** *(Conjugaison complète du verbe avoir sur 15 temps + aide-mémoire)*
+1. 📚 **Français** *(Conjugaison complète sur 15 temps avec un sélecteur de 32 verbes prioritaires de Secondaire 1 : Avoir, Être, verbes des 1er, 2e et 3e groupes + aide-mémoire dynamique)*
 2. 📐 **Mathématiques** :
    - **Chapitre 1 : Opérations fondamentales & Priorités (12 questions)** (PEMDAS, fractions, périmètres et aires)
    - **Chapitre 2 : Les Nombres Entiers Relatifs (52 questions)** (Positifs/négatifs, opposés, droites numériques, ordre croissant/décroissant, thermomètres, problèmes concrets comme l'oiseau en plongeon, méthode des jetons & paires nulles, additions, soustractions et repérage dans les 4 quadrants du plan cartésien)
@@ -11,9 +11,9 @@ L'application est structurée autour de trois grandes matières du programme qu�
 
 ---
 
-## 🎯 Module Français — Conjugaison du Verbe Avoir (POC)
+## 🎯 Module Français — Conjugaison multiverbes (32 verbes de Secondaire 1)
 
-Le programme de Secondaire 1 exige la maîtrise des verbes modèles fondamentaux, particulièrement l'auxiliaire **avoir** à travers **15 temps de verbe** clés :
+Le programme de Secondaire 1 exige la maîtrise des verbes modèles fondamentaux et des verbes fréquents. L'élève choisit son verbe au début de la session parmi **32 verbes incontournables** (les deux auxiliaires *avoir* et *être*, les verbes du 1er groupe avec leurs particularités *-cer*, *-ger*, *-eler*, *-eter*, *-oyer*, *-ayer*, le modèle du 2e groupe en *-issant*, et les verbes fréquents et irréguliers du 3e groupe). Chaque verbe est couvert à travers les **15 temps de verbe** clés du MEQ/PFEQ :
 
 | Mode | Temps de verbe inclus |
 | :--- | :--- |

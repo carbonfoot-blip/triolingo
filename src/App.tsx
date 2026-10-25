@@ -4,12 +4,19 @@ import { ConjugationModule } from './components/ConjugationModule';
 import { MathModule } from './components/MathModule';
 import { GeoModule } from './components/GeoModule';
 import { ConjugationTableModal } from './components/ConjugationTableModal';
+import { type VerbData } from './data/conjugationData';
 import { BookCheck, Sparkles, Heart, SpellCheck, BookmarkCheck, ArrowLeft, Check } from 'lucide-react';
 
 export function App() {
   const [currentSubject, setCurrentSubject] = useState<SubjectId>('francais');
   const [isReferenceOpen, setIsReferenceOpen] = useState<boolean>(false);
+  const [referenceVerb, setReferenceVerb] = useState<VerbData | undefined>(undefined);
   const [activeFrenchTab, setActiveFrenchTab] = useState<'conjugaison' | 'orthographe' | 'grammaire'>('conjugaison');
+
+  const handleOpenReference = (verb?: VerbData) => {
+    setReferenceVerb(verb);
+    setIsReferenceOpen(true);
+  };
 
   return (
     <div className="app-layout">
@@ -17,7 +24,7 @@ export function App() {
       <Header
         currentSubject={currentSubject}
         onSelectSubject={(subj) => setCurrentSubject(subj)}
-        onOpenReference={() => setIsReferenceOpen(true)}
+        onOpenReference={() => handleOpenReference(undefined)}
       />
 
       {/* Main Content Area */}
@@ -64,7 +71,7 @@ export function App() {
             {/* Conjugation Runner */}
             {activeFrenchTab === 'conjugaison' && (
               <ConjugationModule
-                onOpenReference={() => setIsReferenceOpen(true)}
+                onOpenReference={handleOpenReference}
               />
             )}
 
@@ -99,7 +106,7 @@ export function App() {
                     </li>
                   </ul>
                   <button className="btn btn-primary" onClick={() => setActiveFrenchTab('conjugaison')}>
-                    <ArrowLeft size={16} /> Retour au test de conjugaison (verbe avoir)
+                    <ArrowLeft size={16} /> Retour au test de conjugaison
                   </button>
                 </div>
               </div>
@@ -136,7 +143,7 @@ export function App() {
                     </li>
                   </ul>
                   <button className="btn btn-primary" onClick={() => setActiveFrenchTab('conjugaison')}>
-                    <ArrowLeft size={16} /> Retour au test de conjugaison (verbe avoir)
+                    <ArrowLeft size={16} /> Retour au test de conjugaison
                   </button>
                 </div>
               </div>
@@ -161,7 +168,7 @@ export function App() {
       <ConjugationTableModal
         isOpen={isReferenceOpen}
         onClose={() => setIsReferenceOpen(false)}
-        verbName="avoir"
+        verb={referenceVerb}
       />
 
       {/* Footer */}
@@ -171,8 +178,8 @@ export function App() {
             <strong>TrioLingo</strong> — Conçu avec <Heart size={14} className="inline-icon text-rose" /> pour la réussite des élèves de Secondaire 1.
           </p>
           <div className="footer-links">
-            <button className="footer-link-btn" onClick={() => setIsReferenceOpen(true)}>
-              Aide-mémoire verbe avoir
+            <button className="footer-link-btn" onClick={() => handleOpenReference(undefined)}>
+              Aide-mémoire conjugaison (15 temps)
             </button>
             <span className="footer-sep">•</span>
             <span className="footer-text">Français • Mathématiques • Géographie</span>

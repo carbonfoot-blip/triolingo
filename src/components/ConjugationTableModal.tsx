@@ -1,24 +1,39 @@
 import { useState } from 'react';
-import { X, BookOpen, Search, Check, Sparkles } from 'lucide-react';
-import { VERB_AVOIR, TENSES } from '../data/conjugationData';
+import { X, BookOpen, Search, Check, Sparkles, ChevronDown } from 'lucide-react';
+import { AVAILABLE_VERBS, VERB_AVOIR, TENSES, type VerbData } from '../data/conjugationData';
 
 interface ConjugationTableModalProps {
   isOpen: boolean;
   onClose: () => void;
+  verb?: VerbData;
   verbName?: string;
+  onSelectVerbToPractice?: (verb: VerbData) => void;
 }
 
 export const ConjugationTableModal: React.FC<ConjugationTableModalProps> = ({
   isOpen,
   onClose,
-  verbName = 'avoir',
+  verb,
+  verbName,
+  onSelectVerbToPractice,
 }) => {
+  const [selectedVerbIdOverride, setSelectedVerbIdOverride] = useState<string | null>(null);
+
   const [filterQuery, setFilterQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('Tous');
 
   if (!isOpen) return null;
 
-  // Group conjugations by tense
+  // Derive active verb cleanly without triggering cascading effect renders
+  const defaultVerb =
+    verb ||
+    (verbName ? AVAILABLE_VERBS.find((v) => v.name.toLowerCase() === verbName.toLowerCase()) : null) ||
+    VERB_AVOIR;
+
+  const currentVerb = selectedVerbIdOverride
+    ? AVAILABLE_VERBS.find((v) => v.id === selectedVerbIdOverride) || defaultVerb
+    : defaultVerb;
+
   const tensesList = Object.values(TENSES);
   const categories = ['Tous', 'Indicatif', 'Conditionnel', 'Subjonctif', 'Impératif', 'Infinitif / Participe'];
 
@@ -46,8 +61,29 @@ export const ConjugationTableModal: React.FC<ConjugationTableModalProps> = ({
               <BookOpen size={24} className="text-primary" />
             </div>
             <div>
-              <h2 className="modal-title">Tableau de conjugaison — Verbe <span className="highlight-verb">{verbName}</span></h2>
-              <p className="modal-subtitle">Guide d'étude officiel • 15 temps du programme de Secondaire 1</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <h2 className="modal-title" style={{ margin: 0 }}>
+                  Tableau de conjugaison — Verbe <span className="highlight-verb">{currentVerb.name}</span>
+                </h2>
+                <div className="verb-modal-switcher">
+                  <select
+                    className="styled-verb-select"
+                    value={currentVerb.id}
+                    onChange={(e) => setSelectedVerbIdOverride(e.target.value)}
+                    aria-label="Changer de verbe dans l'aide-mémoire"
+                  >
+                    {AVAILABLE_VERBS.map((v) => (
+                      <option key={v.id} value={v.id}>
+                        {v.name} ({v.group})
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown size={14} className="select-arrow" />
+                </div>
+              </div>
+              <p className="modal-subtitle">
+                {currentVerb.group} • Auxiliaire {currentVerb.auxiliary} • 15 temps du programme de Secondaire 1
+              </p>
             </div>
           </div>
           <button className="modal-close-btn" onClick={onClose} aria-label="Fermer">
@@ -61,7 +97,7 @@ export const ConjugationTableModal: React.FC<ConjugationTableModalProps> = ({
             <Search size={16} className="search-icon" />
             <input
               type="text"
-              placeholder="Rechercher un temps (ex: conditionnel, imparfait)..."
+              placeholder="Rechercher un temps (ex: conditionnel, imparfait, passé simple)..."
               value={filterQuery}
               onChange={(e) => setFilterQuery(e.target.value)}
               className="search-input"
@@ -71,6 +107,7 @@ export const ConjugationTableModal: React.FC<ConjugationTableModalProps> = ({
             {categories.map((cat) => (
               <button
                 key={cat}
+                type="button"
                 className={`chip-btn ${activeCategory === cat ? 'chip-active' : ''}`}
                 onClick={() => setActiveCategory(cat)}
               >
@@ -84,7 +121,7 @@ export const ConjugationTableModal: React.FC<ConjugationTableModalProps> = ({
         <div className="modal-body-scroll">
           <div className="tenses-grid">
             {filteredTenses.map((tense) => {
-              const items = VERB_AVOIR.conjugations.filter((c) => c.tense === tense.key);
+              const items = currentVerb.conjugations.filter((c) => c.tense === tense.key);
 
               return (
                 <div key={tense.key} className="tense-card">
@@ -106,7 +143,11 @@ export const ConjugationTableModal: React.FC<ConjugationTableModalProps> = ({
                           {item.person === 'none'
                             ? '—'
                             : item.person.startsWith('imp_')
-                            ? item.person === 'imp_2s' ? '2e pers. sing.' : item.person === 'imp_1p' ? '1re pers. plur.' : '2e pers. plur.'
+                            ? item.person === 'imp_2s'
+                              ? '2e pers. sing.'
+                              : item.person === 'imp_1p'
+                              ? '1re pers. plur.'
+                              : '2e pers. plur.'
                             : item.person}
                         </span>
                         <span className="tense-row-value">
@@ -125,11 +166,26 @@ export const ConjugationTableModal: React.FC<ConjugationTableModalProps> = ({
         <div className="modal-footer">
           <div className="tip-note">
             <Sparkles size={16} className="text-amber" />
-            <span>Astuce : Le verbe <em>avoir</em> est un verbe irrégulier essentiel qui sert aussi d'auxiliaire !</span>
+            <span>
+              Astuce : Le verbe <em>{currentVerb.name}</em> {currentVerb.description.toLowerCase()}
+            </span>
           </div>
-          <button className="btn btn-primary" onClick={onClose}>
-            <Check size={18} /> Compris, retour au test
-          </button>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {onSelectVerbToPractice && (
+              <button
+                className="btn btn-secondary"
+                onClick={() => {
+                  onSelectVerbToPractice(currentVerb);
+                  onClose();
+                }}
+              >
+                S'entraîner sur ce verbe
+              </button>
+            )}
+            <button className="btn btn-primary" onClick={onClose}>
+              <Check size={18} /> Compris, retour au test
+            </button>
+          </div>
         </div>
       </div>
     </div>
